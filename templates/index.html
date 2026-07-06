@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Rejection Predictor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="theme-toggle-wrap">
+        <button class="btn btn-outline-secondary rounded-pill theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span class="me-2">☀</span>
+            <span>Light</span>
+        </button>
+    </div>
+
+    <main class="container py-5">
+        <header class="row mb-4">
+            <div class="col-lg-8">
+                <div class="text-uppercase small fw-semibold mb-3 text-accent">AI-Powered Financial Assessment</div>
+                <h1 class="display-5 fw-bold mb-3 hero-title">
+                    Loan Rejection <span class="text-accent">Predictor</span>
+                </h1>
+                <p class="lead text-muted mb-4">Enter your financial details to estimate the likelihood of loan rejection based on our machine learning model.</p>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge rounded-pill text-bg-light border">⚡ Instant assessment</span>
+                    <span class="badge rounded-pill text-bg-light border">💼 13 financial inputs</span>
+                    <span class="badge rounded-pill text-bg-light border">🎓 Educational demo</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="card rounded-4 mb-4">
+            <div class="card-body p-4 p-md-5">
+                <form id="predictForm" action="/predict" method="post" novalidate>
+                    <div class="row g-4">
+
+                        <div class="col-12">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold" for="employmentType">Employment Type</label>
+                                    <select class="form-select" id="employmentType" name="employmentType">
+                                        <option value="1">Salaried</option>
+                                        <option value="2">Self-employed</option>
+                                        <option value="3">Contract</option>
+                                        <option value="4">Retired</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold" for="hasHomeOwnership">Home Ownership</label>
+                                    <select class="form-select" id="hasHomeOwnership" name="hasHomeOwnership">
+                                        <option value="1">Own Home</option>
+                                        <option value="0" selected>Renting</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold" for="hasExistingDebts">Existing Debts</label>
+                                    <select class="form-select" id="hasExistingDebts" name="hasExistingDebts">
+                                        <option value="0" selected>No</option>
+                                        <option value="1">Yes</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold" for="loanPurpose">Loan Purpose</label>
+                                    <select class="form-select" id="loanPurpose" name="loanPurpose">
+                                        <option value="1">Home Purchase</option>
+                                        <option value="2">Education</option>
+                                        <option value="3">Business</option>
+                                        <option value="4">Personal</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold" for="dependents">Number of Dependents</label>
+                                    <select class="form-select" id="dependents" name="dependents">
+                                        <option value="0" selected>0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3+</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold" for="savingsAccount">Savings Account</label>
+                                    <select class="form-select" id="savingsAccount" name="savingsAccount">
+                                        <option value="1">Yes</option>
+                                        <option value="0">No</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="age" class="form-label fw-semibold">
+                                Age
+                                <span class="badge rounded-pill ms-2 text-bg-light" id="ageDisplay">— yrs</span>
+                            </label>
+                            <div class="slider-track-wrap">
+                                <input type="range" name="age" id="age" min="18" max="70" value="35" step="1">
+                                <div class="slider-fill" id="ageFill"></div>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mt-2">
+                                <span>18</span><span>70 yrs</span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="employmentYears" class="form-label fw-semibold">
+                                Years of Employment
+                                <span class="badge rounded-pill ms-2 text-bg-light" id="employmentYearsDisplay">—</span>
+                            </label>
+                            <div class="slider-track-wrap">
+                                <input type="range" name="employmentYears" id="employmentYears" min="0" max="50" value="5" step="1">
+                                <div class="slider-fill" id="employmentYearsFill"></div>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mt-2">
+                                <span>0</span><span>50 yrs</span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="income" class="form-label fw-semibold">
+                                Annual Income
+                                <span class="badge rounded-pill ms-2 text-bg-light" id="incomeDisplay">— $</span>
+                            </label>
+                            <div class="slider-track-wrap">
+                                <input type="range" name="income" id="income" min="20000" max="300000" value="75000" step="5000">
+                                <div class="slider-fill" id="incomeFill"></div>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mt-2">
+                                <span>$20k</span><span>$300k</span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="loanAmount" class="form-label fw-semibold">
+                                Loan Amount Requested
+                                <span class="badge rounded-pill ms-2 text-bg-light" id="loanAmountDisplay">— $</span>
+                            </label>
+                            <div class="slider-track-wrap">
+                                <input type="range" name="loanAmount" id="loanAmount" min="5000" max="500000" value="100000" step="5000">
+                                <div class="slider-fill" id="loanAmountFill"></div>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mt-2">
+                                <span>$5k</span><span>$500k</span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="creditScore" class="form-label fw-semibold">
+                                Credit Score
+                                <span class="badge rounded-pill ms-2 text-bg-light" id="creditScoreDisplay">—</span>
+                            </label>
+                            <div class="slider-track-wrap">
+                                <input type="range" name="creditScore" id="creditScore" min="300" max="850" value="650" step="10">
+                                <div class="slider-fill" id="creditScoreFill"></div>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mt-2">
+                                <span>300</span><span>850</span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="debtToIncomeRatio" class="form-label fw-semibold">
+                                Debt-to-Income Ratio
+                                <span class="badge rounded-pill ms-2 text-bg-light" id="debtToIncomeRatioDisplay">—</span>
+                            </label>
+                            <div class="slider-track-wrap">
+                                <input type="range" name="debtToIncomeRatio" id="debtToIncomeRatio" min="0" max="1" value="0.3" step="0.05">
+                                <div class="slider-fill" id="debtToIncomeRatioFill"></div>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mt-2">
+                                <span>0%</span><span>100%</span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="monthlyPayment" class="form-label fw-semibold">
+                                Estimated Monthly Payment
+                                <span class="badge rounded-pill ms-2 text-bg-light" id="monthlyPaymentDisplay">— $</span>
+                            </label>
+                            <div class="slider-track-wrap">
+                                <input type="range" name="monthlyPayment" id="monthlyPayment" min="100" max="5000" value="800" step="50">
+                                <div class="slider-fill" id="monthlyPaymentFill"></div>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mt-2">
+                                <span>$100</span><span>$5000</span>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="summary-box p-3 rounded-4">
+                                <div class="row g-3 text-center">
+                                    <div class="col-sm-3">
+                                        <div class="small text-muted">Annual Income</div>
+                                        <div class="fw-semibold" id="summaryIncome">—</div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="small text-muted">Loan Amount</div>
+                                        <div class="fw-semibold" id="summaryLoanAmount">—</div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="small text-muted">Credit Score</div>
+                                        <div class="fw-semibold" id="summaryCreditScore">—</div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="small text-muted">DTI Ratio</div>
+                                        <div class="fw-semibold" id="summaryDTI">—</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 text-center">
+                            <button type="submit" class="btn btn-primary btn-lg px-4" id="predictBtn">
+                                <span class="btn-text">Check Rejection Risk</span>
+                            </button>
+                            <div class="small text-muted mt-3">This demo uses a machine learning model for educational purposes and is not a substitute for professional financial advice.</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section class="card rounded-4 mb-4 result-section" id="resultSection">
+            <div class="card-body p-4 p-md-5">
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-7">
+                        <div class="gauge-wrap">
+                            <svg class="gauge-svg" viewBox="0 0 300 170" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#8ec5ff"/>
+                                        <stop offset="55%" stop-color="#2563eb"/>
+                                        <stop offset="100%" stop-color="#f43f5e"/>
+                                    </linearGradient>
+                                    <filter id="glow">
+                                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                        <feMerge>
+                                            <feMergeNode in="coloredBlur"/>
+                                            <feMergeNode in="SourceGraphic"/>
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                <path class="gauge-bg" d="M 30 155 A 120 120 0 0 1 270 155" fill="none" stroke-width="16" stroke-linecap="round"/>
+                                <path class="gauge-range" id="gaugeRange" d="M 150 35 A 120 120 0 0 1 270 155" fill="none" stroke="#f43f5e33" stroke-width="22" stroke-linecap="round"/>
+                                <path class="gauge-arc" id="gaugeArc" d="M 30 155 A 120 120 0 0 1 270 155" fill="none" stroke="url(#arcGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="377" stroke-dashoffset="377"/>
+                                <line class="gauge-needle" id="gaugeNeedle" x1="150" y1="155" x2="150" y2="45" stroke-width="3" stroke-linecap="round" filter="url(#glow)"/>
+                                <circle cx="150" cy="155" r="8" class="gauge-pivot"/>
+                                <circle cx="150" cy="155" r="4" class="gauge-pivot-inner"/>
+                                <text class="gauge-label-min" x="22" y="175" text-anchor="middle">0%</text>
+                                <text class="gauge-label-max" x="278" y="175" text-anchor="middle">100%</text>
+                            </svg>
+                            <div class="text-center">
+                                <div class="reading-label">Rejection Probability</div>
+                                <div class="reading-value" id="readingValue">—</div>
+                                <div class="reading-sub" id="predictionLabel">Submit the form to view your rejection risk.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="result-meta p-3 rounded-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="fw-semibold">Risk Assessment</span>
+                                <span class="badge rounded-pill" id="riskBadge">—</span>
+                            </div>
+                            <div class="fs-5 fw-semibold" id="predictionSummary">—</div>
+                            <p class="small text-muted mt-3 mb-0">The shaded zone on the gauge marks the high-risk range (50%+), where the model predicts a higher likelihood of loan rejection.</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="resultErrorWrap" class="mt-4" style="display:none;">
+                    <div class="alert-info rounded-4 p-3 text-danger" id="resultError"></div>
+                </div>
+                {% if prediction_text %}
+                <div class="alert alert-info mt-4 mb-0">{{ prediction_text }}</div>
+                {% endif %}
+            </div>
+        </section>
+
+        <footer class="text-center py-3 small text-muted">
+            Educational demo · Machine Learning Model · <b>By Nikhil Sanjay Kumar Srivastava</b> · Not a substitute for professional financial advice
+        </footer>
+        </footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script>
+        window.FLASK_RESULT = {{ flask_result | tojson if flask_result else 'null' }};
+        
+        // Update loan-specific field display values
+        document.getElementById('age').addEventListener('input', function() {
+            document.getElementById('ageDisplay').textContent = this.value + ' yrs';
+            document.getElementById('summaryIncome').textContent = '$' + parseFloat(document.getElementById('income').value).toLocaleString();
+            document.getElementById('summaryCreditScore').textContent = document.getElementById('creditScore').value;
+        });
+        document.getElementById('income').addEventListener('input', function() {
+            document.getElementById('incomeDisplay').textContent = '$' + parseFloat(this.value).toLocaleString();
+            document.getElementById('summaryIncome').textContent = '$' + parseFloat(this.value).toLocaleString();
+        });
+        document.getElementById('loanAmount').addEventListener('input', function() {
+            document.getElementById('loanAmountDisplay').textContent = '$' + parseFloat(this.value).toLocaleString();
+            document.getElementById('summaryLoanAmount').textContent = '$' + parseFloat(this.value).toLocaleString();
+        });
+        document.getElementById('creditScore').addEventListener('input', function() {
+            document.getElementById('creditScoreDisplay').textContent = this.value;
+            document.getElementById('summaryCreditScore').textContent = this.value;
+        });
+        document.getElementById('employmentYears').addEventListener('input', function() {
+            document.getElementById('employmentYearsDisplay').textContent = this.value + ' yrs';
+        });
+        document.getElementById('debtToIncomeRatio').addEventListener('input', function() {
+            const ratio = (parseFloat(this.value) * 100).toFixed(1);
+            document.getElementById('debtToIncomeRatioDisplay').textContent = ratio + '%';
+            document.getElementById('summaryDTI').textContent = ratio + '%';
+        });
+        document.getElementById('monthlyPayment').addEventListener('input', function() {
+            document.getElementById('monthlyPaymentDisplay').textContent = '$' + parseFloat(this.value).toLocaleString();
+        });
+    </script>
+</body>
+</html>
